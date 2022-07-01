@@ -5,7 +5,7 @@
     </h1>
     <ul class="nav nav-pills">
 			<li class="nav-item"><a href="/news" class="nav-link text-white {if 'news'== $current}active{/if}">News</a></li>
-			<li class="nav-item"><a href="/info" class="nav-link text-white {if 'info'== $current}active{/if}">Info</a></li>
+			<li class="nav-item"><a href="/news/info" class="nav-link text-white {if 'info'== $current}active{/if}">Info</a></li>
 			{if 'news'== $current}
 				<li class="nav-item"><a href="#" class="nav-link text-white" onclick="refreshRss(); return false;">Подгрузить через RSS</a></li>
 				<li class="nav-item"><a href="#" class="nav-link text-white" onclick="clearCache(); return false;">сбросить КЭШ</a></li>

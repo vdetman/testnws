@@ -97,6 +97,14 @@ class NewsController extends AbstractController
 		return $filter;
 	}
 
+
+	public function info()
+	{
+		$this->vars['current'] = 'info';
+		$this->layout()->page()->setTitle('Описание')->setHeader('Описание');
+		$this->tpl()->template('news/info');
+	}
+
 	public function refreshRss()
 	{
 		// Проверяем корректность запроса
