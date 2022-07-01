@@ -1,0 +1,11 @@
+_tmp/*
+logs/*
+!.htaccess
+!index.html
+
+app/config/environment.php
+
+# IDE Files
+#-------------------------
+nbproject/*
+.idea/*

@@ -1,0 +1,60 @@
+<IfModule mod_rewrite.c>
+php_value upload_max_filesize 500M
+php_value post_max_size 500M
+
+Options +FollowSymLinks 
+RewriteEngine On 
+RewriteCond %{HTTP_HOST} ^www\.(.*) [NC] 
+RewriteRule ^(.*)$ http://%1/$1	[R=301,L]
+
+#RewriteEngine on
+#RewriteCond $1 !^(index\.php|images|css|js|robots\.txt|favicon\.ico)
+#RewriteBase /
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond %{REQUEST_FILENAME} !-d
+#RewriteRule ^(.*)$ index.php?$1 [L]
+
+RewriteEngine On
+RewriteBase /
+RewriteCond %{THE_REQUEST} /public/([^\s?]*) [NC]
+RewriteRule ^ %1 [L,NE,R=302]
+RewriteRule ^((?!public/).*)$ public/?$1 [L,NC]
+
+AddDefaultCharset utf-8
+</IfModule>
+
+AddType application/x-httpd-php .js
+AddHandler x-httpd-php5 .js
+
+<FilesMatch "\.(js|php)$">
+#SetHandler application/x-httpd-php
+</FilesMatch>
+
+
+php_flag display_errors On
+#показать все ошибки кроме предупреждений (Notice)
+php_value error_reporting "E_ALL & ~E_NOTICE"
+
+<IfModule mod_expires.c>
+	ExpiresActive On
+	ExpiresByType application/javascript "access plus 5 days"
+	ExpiresByType text/javascript "access plus 5 days"
+	ExpiresByType text/css "access plus 5 days"
+	ExpiresByType image/gif "access plus 5 days"
+	ExpiresByType image/jpeg "access plus 5 days"
+	ExpiresByType image/png "access plus 5 days"
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml application/xml application/xhtml+xml text/javascript text/css application/x-javascript
+  BrowserMatch ^Mozilla/4 gzip-only-text/html
+  BrowserMatch ^Mozilla/4.0[678] no-gzip
+  BrowserMatch bMSIE !no-gzip !gzip-only-text/html
+  <ifModule mod_gzip.c>
+    mod_gzip_on Yes
+    mod_gzip_item_include file \.js$
+    mod_gzip_item_include file \.css$
+  </ifModule>
+</IfModule>
+
+
