@@ -10,19 +10,19 @@
 					<div class="list-group-item">
 						<input class="form-control form-control-sm autosubmit" id="search" value="{$search}" type="text" placeholder="поиск по тексту">
 					</div>
-					{function name=rubrics pad=pad}
+					{function name=rubrics level=level}
 						{foreach from=$data item=$item}
-							<a href="/news?rubric={$item->getRubric()->getId()}" style="padding-left: {$pad * 12 + 16}px;" class="list-group-item list-group-item-action {if $currentRubric == $item->getRubric()->getId()}list-group-item-info{/if}">
-								{if $pad}&#8627;{/if}
+							<a href="/news?rubric={$item->getRubric()->getId()}" style="padding-left: {$level * 12 + 16}px;" class="list-group-item list-group-item-action {if $currentRubric == $item->getRubric()->getId()}list-group-item-info{/if}">
+								{if $level}&#8627;{/if}
 								{$item->getRubric()->getName()}
 								<small>({$item->getItemsCount()})</small>
 							</a>
 							{if $item->getChilds()}
-								{call name=rubrics data=$item->getChilds() pad=$pad+1}
+								{call name=rubrics data=$item->getChilds() level=$level+1}
 							{/if}
 						{/foreach}
 					{/function}
-					{call name=rubrics data=$rubricTree->getChilds() pad=$pad}
+					{call name=rubrics data=$rubricTree->getChilds() level=0}
 				</div>
 			</div>
 		</div>

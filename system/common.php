@@ -105,7 +105,7 @@ function __autoload_class($class)
 			return;
 		}
 
-		$subControllers = [ADMIN];
+		$subControllers = [];
 		foreach ($subControllers as $subDirectory) {
 			if(is_file($directory.$subDirectory.'/'.$class.'.php')){
 				require_once($directory.$subDirectory.'/'.$class.'.php');

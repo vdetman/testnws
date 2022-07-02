@@ -89,10 +89,9 @@ class NewsController extends AbstractController
 			$this->vars['currentRubric'] = $filter['rubric_id'];
 		}
 
-		if (!empty($get['search'])) {
+		if (!empty($get['search']))
 			$filter['search'] = trim($get['search']);
-			$this->vars['search'] = $filter['search'];
-		}
+		$this->vars['search'] = !empty($filter['search']) ? $filter['search'] : '';
 
 		return $filter;
 	}
@@ -101,6 +100,9 @@ class NewsController extends AbstractController
 	public function info()
 	{
 		$this->vars['current'] = 'info';
+
+		$this->vars['sqlStruct'] = file_get_contents(VF_TPLS_DIR . '/base.sql');
+
 		$this->layout()->page()->setTitle('Описание')->setHeader('Описание');
 		$this->tpl()->template('news/info');
 	}
@@ -110,6 +112,7 @@ class NewsController extends AbstractController
 		// Проверяем корректность запроса
 		if (!$this->input()->isAjax()) die();
 		$this->ajaxResponse['cnt'] = $this->news()->fill();
+		//$this->ajaxResponse['cnt'] = 0;
 		die(json_encode($this->ajaxResponse));
 	}
 

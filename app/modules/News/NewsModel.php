@@ -235,7 +235,7 @@ class NewsModel extends \Core
 	 */
 	public function addRubricToRootTree($rubricId)
 	{
-		$this->db()->prepare($this->db()->phInsert("INSERT IGNORE INTO {$this->table_rubrics_tree} :insert;", ['parent_rubric_id' => 0, 'child_rubric_id' => $rubricId]));
+		$this->db()->prepare($this->db()->phInsert("INSERT IGNORE INTO {$this->table_rubrics_tree} :insert;", ['parent_rubric_id' => NULL, 'child_rubric_id' => $rubricId]));
 		return $this->db()->execute();
 	}
 }

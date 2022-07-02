@@ -43,12 +43,6 @@ abstract class AbstractController extends Core
 	private function _processDisposition()
 	{
 		switch ($this->uri()->getSegments(0)) {
-			case ADMIN:
-				define('DISPOSITION', ADMIN);
-				break;
-			case 'help':
-				define('DISPOSITION', 'help');
-				break;
 			default: define('DISPOSITION', false);
 		}
 	}
