@@ -23,6 +23,17 @@ class NewsModel extends \Core
 	}
 
 	/**
+	 * @param string
+	 * @return boolean
+	 */
+	public function isExistsHash($hash)
+	{
+		$this->db()->prepare("SELECT news_id FROM {$this->table} WHERE hash = :hash LIMIT 1;");
+		$this->db()->execute([':hash' => $hash]);
+		return boolval($this->db()->result());
+	}
+
+	/**
 	 * @param Filter
 	 * @return array
 	 */

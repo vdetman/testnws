@@ -1,6 +1,7 @@
 <?php if(!defined('VF_ROOT_DIR')) die('Direct access denied');
 
 use Entity\Filter;
+use Entity\Result;
 use News\Entity\Item;
 use News\Entity\Tree;
 use News\Entity\Rubric;
@@ -179,6 +180,43 @@ class News extends Core
 			return $lastId;
 		}
 		return false;
+	}
+
+
+	/**
+	 * @param array
+	 * @param array
+	 * @return Result
+	 */
+	public function smartCreate($data, $rubrics)
+	{
+		$result = new Result();
+
+		// Инстанс новости
+		$item = $this->_new()->fromArray($data)->setStatus('active')->setCreated(new \Entity\DateTime());
+		$item->setHash($this->_getHash($item->getHeader(), $item->getCreated() ? $item->getCreated()->format('Y-m-d') : ''));
+
+		if ($this->_model()->isExistsHash($item->getHash()))
+			return $result->setError('Такая новость уже есть в БД');
+
+		$this->db()->begin();
+
+		if (false == ($itemId = $this->create($item))) {
+			$this->db()->rollback();
+			return $result->setError('Ошибка добавления новости');
+		}
+
+		// Привяжем к рубрике
+		foreach ($rubrics as $rubricId) {
+			if (!$this->createRelation($itemId, $rubricId)) {
+				$this->db()->rollback();
+				return $result->setError("Ошибка привязки новости к рубрике #{$rubricId}");
+			}
+		}
+		
+		$this->db()->commit();
+
+		return $result->setStatus(true);
 	}
 
 	/**

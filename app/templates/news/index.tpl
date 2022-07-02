@@ -10,19 +10,13 @@
 					<div class="list-group-item">
 						<input class="form-control form-control-sm autosubmit" id="search" value="{$search}" type="text" placeholder="поиск по тексту">
 					</div>
-					{function name=rubrics level=level}
-						{foreach from=$data item=$item}
-							<a href="/news?rubric={$item->getRubric()->getId()}" style="padding-left: {$level * 12 + 16}px;" class="list-group-item list-group-item-action {if $currentRubric == $item->getRubric()->getId()}list-group-item-info{/if}">
-								{if $level}&#8627;{/if}
-								{$item->getRubric()->getName()}
-								<small>({$item->getItemsCount()})</small>
-							</a>
-							{if $item->getChilds()}
-								{call name=rubrics data=$item->getChilds() level=$level+1}
-							{/if}
-						{/foreach}
-					{/function}
-					{call name=rubrics data=$rubricTree->getChilds() level=0}
+					<div id="rubricsList">
+						{include file='./_rubricsList.tpl'}
+					</div>
+					<div class="p-1">
+						<button class="btn btn-xs btn-success" onclick="newItemModal();">+ добавить новость</button>
+						{*<button class="btn btn-xs btn-danger" onclick="refreshTree();">refresh</button>*}
+					</div>
 				</div>
 			</div>
 		</div>
@@ -44,4 +38,7 @@
 <input type="hidden" id="filter" value='{$filter}' />
 <input type="hidden" id="loaded" value='{$loaded}' />
 <input type="hidden" id="total" value='{$total}' />
+
+<div id="modalContainer" class="modal fade" aria-hidden="true" style="display: none;"></div>
+
 {include file='../_units/footer.tpl'}

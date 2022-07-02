@@ -123,4 +123,65 @@ class NewsController extends AbstractController
 		$this->cache()->flush();
 		die(json_encode($this->ajaxResponse));
 	}
+
+	public function newItemModal()
+	{
+		//Проверяем корректность запроса
+		if (!$this->input()->isAjax()) die();
+		$this->ajaxResponse['modalContainer'] = $this->tpl()->get("news/_newItemModal", ['rubricTree' => $this->news()->getTree()]);
+		die(json_encode($this->ajaxResponse));
+	}
+
+	public function refreshTree()
+	{
+		//Проверяем корректность запроса
+		if (!$this->input()->isAjax()) die();
+		$this->ajaxResponse['tree'] = $this->tpl()->get("news/_rubricsList", [
+			'rubricTree'	=> $this->news()->getTree(),
+			'currentRubric'	=> $this->input()->post('rid', true)
+		]);
+		die(json_encode($this->ajaxResponse));
+	}
+
+	public function newItemSave()
+	{
+		//Проверяем корректность запроса
+		if (!$this->input()->isAjax()) die();
+
+		$params = [];
+		parse_str($this->input()->post('params'), $params);
+
+		// Check rubrics
+		$rubrics = !empty($params['rubrics']) ? $params['rubrics'] : [];
+		if (!$rubrics) {
+			$this->ajaxResponse['status'] = false;
+			$this->ajaxResponse['descr'] = 'Не выбрано ни одной рубрики. WTF???';
+			die(json_encode($this->ajaxResponse));
+		}
+
+		// Получаем и предобрабатываем входящие поля новости
+		$data = !empty($params['news']) ? $params['news'] : [];
+		$data = array_map('trim', $data);
+
+		$map = ['header' => 'Название', 'preview' => 'Превьюха', 'content' => 'Контент']; // Для фронта
+		foreach ($data as $field => $value) {
+			if (!mb_strlen($value)) {
+				$this->ajaxResponse['status'] = false;
+				$this->ajaxResponse['descr'] = "Не заполнено поле {$map[$field]}";
+				die(json_encode($this->ajaxResponse));
+			}
+		}
+
+		// Когда всё проверили, отдаем дальнейшую работу сервису
+		$result = $this->news()->smartCreate($data, $rubrics);
+		if (!$result->success()) {
+			$this->ajaxResponse['status'] = false;
+			$this->ajaxResponse['descr'] = $result->getError();
+			die(json_encode($this->ajaxResponse));
+		}
+
+		$this->ajaxResponse['descr'] = 'Новость добавлена. Подождите 5 сек..';
+
+		die(json_encode($this->ajaxResponse));
+	}
 }

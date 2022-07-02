@@ -58,6 +58,17 @@ function loadMore() {
 	});
 }
 
+function refreshTree() {
+	const wrapper = $('#rubricsList'), urlParams = new URLSearchParams(window.location.search);
+	$.post('/news/refreshTree', {rid : urlParams.get('rubric')},
+	function(response){
+		wrapper.html(response.tree);
+	}, 'json').fail(function( response ) {
+		alert('Ajax error');
+		console.log(response);
+	});
+}
+
 function refreshRss() {
 	$.post('/news/refreshRss', {},
 	function(response){
@@ -78,6 +89,55 @@ function clearCache() {
 		window.location.reload();
 	}, 'json').fail(function( response ) {
 		notify('Ajax error', false);
+		console.log(response);
+	});
+}
+
+function newItemModal()
+{
+	if(processAjax()){return false;}else{startAjax();}
+	$.post('/news/newItemModal', {},
+	function(response){
+		stopAjax();
+		if(response.status){
+			$('#modalContainer').html(response.modalContainer).modal('show');
+		} else {
+			notify(response.error, false);
+		}
+	}, 'json').fail(function( response ) {
+		stopAjax();
+		alert('Ajax error');
+		console.log(response);
+	});
+}
+
+function newItemSave()
+{
+	if(processAjax()){return false;}else{startAjax();}
+	$('#newItemResult .alert').html('').hide();
+	$.post('/news/newItemSave', {params : $('#newItemFrom').serialize()},
+	function(response){
+		stopAjax();
+		if (response.status) {
+			$('#newItemFrom input').val('');
+			$('#newItemFrom select').val('');
+			$('#newItemFrom textarea').val('');
+			$('#newItemFrom').slideUp(500);
+			$('#newItemResult .success').html(response.descr).show();
+			window.setTimeout(function(){
+				$('#modalContainer').html('').modal('hide');
+				$('#loaded').val(0);
+				$('#total').val(0);
+				$('#newsList').html('');
+				loadMore();
+				refreshTree();
+			}, 5000);
+		} else {
+			$('#newItemResult .error').html(response.descr).show();
+		}
+	}, 'json').fail(function( response ) {
+		stopAjax();
+		alert('Ajax error');
 		console.log(response);
 	});
 }
